@@ -1,92 +1,84 @@
-# Squad App - NodeJs
 
+# BackEnd Engineer Case Challenge - HabariPay
 
+In this challenge you will build a super simplified version of a Payment Service Provider (PSP) just like **Squad** and maybe learn a little more about how payments work in Nigeria.
+Make sure you read the whole document carefully and follow the guidelines in it.
 
-## Getting started
+## Context
 
-To make it easy for you to get started with GitLab, here's a list of recommended next steps.
+In essence, Squad as a PSP has two very important functions:
 
-Already a pro? Just edit this README.md and make it your own. Want to make it easy? [Use the template at the bottom](#editing-this-readme)!
+1. Allow merchants receive payments from their customers ("transactions")
+2. Send payments to merchant's bank account ("pay-outs")
 
-## Add your files
+At HabariPay, we have two entities that represent this information:
 
-- [ ] [Create](https://docs.gitlab.com/ee/user/project/repository/web_editor.html#create-a-file) or [upload](https://docs.gitlab.com/ee/user/project/repository/web_editor.html#upload-a-file) files
-- [ ] [Add files using the command line](https://docs.gitlab.com/ee/gitlab-basics/add-file.html#add-a-file-using-the-command-line) or push an existing Git repository with the following command:
+* `transactions`: representing purchase information, card details, value, etc.
+* `payouts`: represents the money that we paid out to the customer
 
-```
-cd existing_repo
-git remote add origin https://gitlab.com/habaripay/challenges/backend/squad-app-nodejs.git
-git branch -M live
-git push -uf origin live
-```
+> Note: when a customer completes a card transaction, we normally receive the amount from the card processor (called a settlement) 
+on average 1 day later (what we call T+1), because this is how the financial chain (issuer, acquirers) works. 
+However, it is possible to receive this amount in minutes through "Virtual Accounts". 
+If you are curious, you can look at the product page, but this is not necessary to complete this challenge: https://squadco.com/other-products/#virtualAccounts
 
-## Integrate with your tools
+## Requirements
 
-- [ ] [Set up project integrations](https://gitlab.com/habaripay/challenges/backend/squad-app-nodejs/-/settings/integrations)
+Fork this repo and create a service with the following requirements:
 
-## Collaborate with your team
+1. The service must process transactions for cards, receiving the following information:
+    * Transaction value. Eg: `'5000'`
+    * Transaction description. Eg: `'Airtime purchase'`
+    * Card number. Eg: `'5555 5555 5555 4444'`
+    * Name of cardholder. Eg: `'Airtime purchase'`
+    * Card expiration date. Eg: `'06/23'`
+    * Card verification code (CVV). Eg: `'373'`
+    * Currency. Eg: `'NGN'`
+2. The service must process transactions for Virtual Accounts, receiving the following information:
+   * Transaction value
+   * Transaction description. Eg: `'Airtime purchase'`
+   * Customer Account Name. Eg: `'Airtime purchase'`
+   * Customer Account Number. Eg: `'5555555555'`
+   * Customer Bank code. Eg: `'058'`
+   * Currency. Eg: `'USD'`
+3. The transactions should maintain a unique reference.
+4. The service must process settlement requests from card processors. This should update the status of transaction matching the transaction reference to `success`. Assume you will get the following information from the card processor:
+   * Transaction amount. Eg: `'5000'`
+   * Transaction reference. Eg: `'Bweh-4b39-2nj4-432'` (Matching a existing card transaction)
+   * Card number. Eg: `'5555 5555 5555 4444'`
+   * Currency. Eg: `'NGN'`
+5. The service must create the customer's transactions, with the following rules:
+    * If the transaction is made with a virtual account:
+        * Set status = `success` (indicating that the transaction was received and settled)
+        * Set fee to be 5%
+        * Update wallet balance for the currency, minus fee
+    * If the transaction is made with a card:
+        * Set status = `pending` (indicating that the transaction was received but not settled)
+        * Set fee to be 3%
+6. The service must return a list of transactions already created
+7. As the card number is sensitive information, the service can only store and return the last 4 digits of the card.
+8. The service must be able to create payouts. This should be a lump-some of all settled transactions.
+9. When creating payouts, the processing fee must also be deducted. 
+Ex: if the rate is 5% and the merchant received a transaction worth N100.00, he will only receive N95.00. Consider the following fees:
+    * 3% for transactions made with a card
+    * 5% for transactions made with a Virtual Accounts
+10. The service must provide a means of consultation for the merchant to view their balance with the following information:
+     * `available` balance: Total of every settled transaction the merchant has received (minus payouts)
+     * `pending_settlement` balance: Total of every pending transaction
 
-- [ ] [Invite team members and collaborators](https://docs.gitlab.com/ee/user/project/members/)
-- [ ] [Create a new merge request](https://docs.gitlab.com/ee/user/project/merge_requests/creating_merge_requests.html)
-- [ ] [Automatically close issues from merge requests](https://docs.gitlab.com/ee/user/project/issues/managing_issues.html#closing-issues-automatically)
-- [ ] [Enable merge request approvals](https://docs.gitlab.com/ee/user/project/merge_requests/approvals/)
-- [ ] [Set auto-merge](https://docs.gitlab.com/ee/user/project/merge_requests/merge_when_pipeline_succeeds.html)
+> Note: in this challenge, you don't need to worry about authentication, installments or recurring payment.
 
-## Test and Deploy
+## Restrictions
 
-Use the built-in continuous integration in GitLab.
+1. The service must be written in Node.js
+2. The service must store information in a database. Here at HabariPay we widely use PostgresSQL
+3. The project must have a README.md with all instructions on how to run and test the project and the services provided.
+4. The project must contain tests satisfying all the requirements.
 
-- [ ] [Get started with GitLab CI/CD](https://docs.gitlab.com/ee/ci/quick_start/index.html)
-- [ ] [Analyze your code for known vulnerabilities with Static Application Security Testing(SAST)](https://docs.gitlab.com/ee/user/application_security/sast/)
-- [ ] [Deploy to Kubernetes, Amazon EC2, or Amazon ECS using Auto Deploy](https://docs.gitlab.com/ee/topics/autodevops/requirements.html)
-- [ ] [Use pull-based deployments for improved Kubernetes management](https://docs.gitlab.com/ee/user/clusters/agent/)
-- [ ] [Set up protected environments](https://docs.gitlab.com/ee/ci/environments/protected_environments.html)
+## Assessment
 
-***
-
-# Editing this README
-
-When you're ready to make this README your own, just edit this file and use the handy template below (or feel free to structure it however you want - this is just a starting point!). Thank you to [makeareadme.com](https://www.makeareadme.com/) for this template.
-
-## Suggestions for a good README
-Every project is different, so consider which of these sections apply to yours. The sections used in the template are suggestions for most open source projects. Also keep in mind that while a README can be too long and detailed, too long is better than too short. If you think your README is too long, consider utilizing another form of documentation rather than cutting out information.
-
-## Name
-Choose a self-explaining name for your project.
-
-## Description
-Let people know what your project can do specifically. Provide context and add a link to any reference visitors might be unfamiliar with. A list of Features or a Background subsection can also be added here. If there are alternatives to your project, this is a good place to list differentiating factors.
-
-## Badges
-On some READMEs, you may see small images that convey metadata, such as whether or not all the tests are passing for the project. You can use Shields to add some to your README. Many services also have instructions for adding a badge.
-
-## Visuals
-Depending on what you are making, it can be a good idea to include screenshots or even a video (you'll frequently see GIFs rather than actual videos). Tools like ttygif can help, but check out Asciinema for a more sophisticated method.
-
-## Installation
-Within a particular ecosystem, there may be a common way of installing things, such as using Yarn, NuGet, or Homebrew. However, consider the possibility that whoever is reading your README is a novice and would like more guidance. Listing specific steps helps remove ambiguity and gets people to using your project as quickly as possible. If it only runs in a specific context like a particular programming language version or operating system or has dependencies that have to be installed manually, also add a Requirements subsection.
-
-## Usage
-Use examples liberally, and show the expected output if you can. It's helpful to have inline the smallest example of usage that you can demonstrate, while providing links to more sophisticated examples if they are too long to reasonably include in the README.
-
-## Support
-Tell people where they can go to for help. It can be any combination of an issue tracker, a chat room, an email address, etc.
-
-## Roadmap
-If you have ideas for releases in the future, it is a good idea to list them in the README.
-
-## Contributing
-State if you are open to contributions and what your requirements are for accepting them.
-
-For people who want to make changes to your project, it's helpful to have some documentation on how to get started. Perhaps there is a script that they should run or some environment variables that they need to set. Make these steps explicit. These instructions could also be useful to your future self.
-
-You can also document commands to lint the code or run tests. These steps help to ensure high code quality and reduce the likelihood that the changes inadvertently break something. Having instructions for running tests is especially helpful if it requires external setup, such as starting a Selenium server for testing in a browser.
-
-## Authors and acknowledgment
-Show your appreciation to those who have contributed to the project.
-
-## License
-For open source projects, say how it is licensed.
-
-## Project status
-If you have run out of energy or time for your project, put a note at the top of the README saying that development has slowed down or stopped completely. Someone may choose to fork your project or volunteer to step in as a maintainer or owner, allowing your project to keep going. You can also make an explicit request for maintainers.
+1. The challenge must be sent to the HR person contacting you, in the form of a link to a public repository
+2. We will evaluate you based on the service architecture, code quality, understanding of business rules, willingness to take on the challenge and how prepared this service would be to be run in production.
+3. After receiving the challenge, we will call you to talk to the team, present the challenge and discuss the decisions you made.
+4. We are open to talking about how we can improve on this service.
+5. We think that **1 week** is an ok amount of time to do the challenge, but we know that not everyone has the same level of availability. So let us know if you need more time, okay?
+6. Good luck :)
