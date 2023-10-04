@@ -29,34 +29,33 @@ Fork this repo and create a service with the following requirements:
     * Transaction value. Eg: `'5000'`
     * Transaction description. Eg: `'Airtime purchase'`
     * Card number. Eg: `'5555 5555 5555 4444'`
-    * Name of cardholder. Eg: `'Airtime purchase'`
+    * Name of cardholder. Eg: `'Victor Anuebunwa'`
     * Card expiration date. Eg: `'06/23'`
     * Card verification code (CVV). Eg: `'373'`
     * Currency. Eg: `'NGN'`
 2. The service must process transactions for Virtual Accounts, receiving the following information:
    * Transaction value
-   * Transaction description. Eg: `'Airtime purchase'`
-   * Customer Account Name. Eg: `'Airtime purchase'`
+   * Transaction description. Eg: `'Data purchase'`
+   * Customer Account Name. Eg: `'John Babawale'`
    * Customer Account Number. Eg: `'5555555555'`
    * Customer Bank code. Eg: `'058'`
    * Currency. Eg: `'USD'`
 3. The transactions should maintain a unique reference.
-4. The service must process settlement requests from card processors. This should update the status of transaction matching the transaction reference to `success`. Assume you will get the following information from the card processor:
+4. The service must create the customer's transactions, with the following rules:
+   * If the transaction is made with a virtual account:
+      * Set status = `success` (indicating that the transaction was received and settled)
+      * Set fee to be 5%
+   * If the transaction is made with a card:
+      * Set status = `pending` (indicating that the transaction was received but not settled)
+      * Set fee to be 3%
+5. The service must process settlement requests from card processors. This should update the status of transaction matching the transaction reference to `success`. Assume you will get the following information from the card processor:
    * Transaction amount. Eg: `'5000'`
    * Transaction reference. Eg: `'Bweh-4b39-2nj4-432'` (Matching a existing card transaction)
    * Card number. Eg: `'5555 5555 5555 4444'`
    * Currency. Eg: `'NGN'`
-5. The service must create the customer's transactions, with the following rules:
-    * If the transaction is made with a virtual account:
-        * Set status = `success` (indicating that the transaction was received and settled)
-        * Set fee to be 5%
-        * Update wallet balance for the currency, minus fee
-    * If the transaction is made with a card:
-        * Set status = `pending` (indicating that the transaction was received but not settled)
-        * Set fee to be 3%
-6. The service must return a list of transactions already created
+6. The service must return a list of transactions already created.
 7. As the card number is sensitive information, the service can only store and return the last 4 digits of the card.
-8. The service must be able to create payouts. This should be a lump-some of all settled transactions.
+8. The service must be able to create payouts. The amount should be a lump-sum of all settled transaction value.
 9. When creating payouts, the processing fee must also be deducted. 
 Ex: if the rate is 5% and the merchant received a transaction worth N100.00, he will only receive N95.00. Consider the following fees:
     * 3% for transactions made with a card
@@ -65,20 +64,20 @@ Ex: if the rate is 5% and the merchant received a transaction worth N100.00, he 
      * `available` balance: Total of every settled transaction the merchant has received (minus payouts)
      * `pending_settlement` balance: Total of every pending transaction
 
-> Note: in this challenge, you don't need to worry about authentication, installments or recurring payment.
+> Note: You don't need to worry about authentication, installments or recurring payments and feel free to install any necessary module you wish to use.
 
 ## Restrictions
 
 1. The service must be written in Node.js
 2. The service must store information in a database. Here at HabariPay we widely use PostgresSQL
-3. The project must have a README.md with all instructions on how to run and test the project and the services provided.
-4. The project must contain tests satisfying all the requirements.
+3. The project must contain automated tests satisfying all the requirements.
 
 ## Assessment
 
-1. The challenge must be sent to the HR person contacting you, in the form of a link to a public repository
-2. We will evaluate you based on the service architecture, code quality, understanding of business rules, willingness to take on the challenge and how prepared this service would be to be run in production.
-3. After receiving the challenge, we will call you to talk to the team, present the challenge and discuss the decisions you made.
-4. We are open to talking about how we can improve on this service.
-5. We think that **1 week** is an ok amount of time to do the challenge, but we know that not everyone has the same level of availability. So let us know if you need more time, okay?
-6. Good luck :)
+1. This repo contains a simple code setup to quickly get you started, but feel free to replace as much as you like.
+2. The challenge must be sent to the HR person contacting you, in the form of a link to a public repository
+3. We will evaluate you based on the service architecture, code quality, understanding of business rules, willingness to take on the challenge and how prepared this service would be to be run in production.
+4. After receiving the submission, we will call you to talk to the team, present the challenge and discuss the decisions you made.
+5. We are also open to talk about how we can improve on this service.
+6. We think that **1 week** is an ok amount of time to do the challenge, but we know that not everyone has the same level of availability. So let us know if you need more time, okay?
+7. Good luck :)
