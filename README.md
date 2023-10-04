@@ -71,13 +71,13 @@ Ex: if the rate is 5% and the merchant received a transaction worth N100.00, he 
 1. The service must be written in Node.js
 2. The service must store information in a database. Here at HabariPay we widely use PostgresSQL
 3. The project must contain automated tests satisfying all the requirements.
+4. This repo contains a simple code setup to quickly get you started, but feel free to replace as much as you like.
 
-## Assessment
+## How to submit
 
-1. This repo contains a simple code setup to quickly get you started, but feel free to replace as much as you like.
-2. The challenge must be sent to the HR person contacting you, in the form of a link to a public repository
-3. We will evaluate you based on the service architecture, code quality, understanding of business rules, willingness to take on the challenge and how prepared this service would be to be run in production.
-4. After receiving the submission, we will call you to talk to the team, present the challenge and discuss the decisions you made.
-5. We are also open to talk about how we can improve on this service.
-6. We think that **1 week** is an ok amount of time to do the challenge, but we know that not everyone has the same level of availability. So let us know if you need more time, okay?
-7. Good luck :)
+1. The challenge must be sent to the HR person contacting you, in the form of a link to a public repository
+2. We will evaluate you based on the service architecture, code quality, understanding of business rules, willingness to take on the challenge and how prepared this service would be to be run in production.
+3. After receiving the submission, we will call you to talk to the team, present the challenge and discuss the decisions you made.
+4. We are also open to talk about how we can improve on this service.
+5. We think that **1 week** is an ok amount of time to do the challenge, but we know that not everyone has the same level of availability. So let us know if you need more time, okay?
+6. Good luck :)
