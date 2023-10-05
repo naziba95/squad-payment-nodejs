@@ -1,7 +1,7 @@
 
 # BackEnd Engineer Case Challenge - HabariPay
 
-In this challenge you will build a super simplified version of a Payment Service Provider (PSP) just like **Squad** and maybe learn a little more about how payments work in Nigeria.
+In this challenge you will build a super simplified version of a Payment Service Provider (PSP) just like [**Squad**](https://squadco.com) and maybe learn a little more about how payments work in Nigeria.
 Make sure you read the whole document carefully and follow the guidelines in it.
 
 ## Context
@@ -16,9 +16,9 @@ At HabariPay, we have two entities that represent this information:
 * `transactions`: representing purchase information, card details, value, etc.
 * `payouts`: represents the money that we paid out to the customer
 
-> Note: when a customer completes a card transaction, we normally receive the amount from the card processor (called a settlement) 
+> Note: when a customer completes a card transaction, we normally receive the money from the card processor (called a settlement) 
 on average 1 day later (what we call T+1), because this is how the financial chain (issuer, acquirers) works. 
-However, it is possible to receive this amount in minutes through "Virtual Accounts". 
+However, it is possible to receive money instantly through "Virtual Accounts". 
 If you are curious, you can look at the product page, but this is not necessary to complete this challenge: https://squadco.com/other-products/#virtualAccounts
 
 ## Requirements
@@ -69,7 +69,7 @@ Ex: if the rate is 5% and the merchant received a transaction worth N100.00, he 
 ## Restrictions
 
 1. The service must be written in Node.js
-2. The service must store information in a database. Here at HabariPay we widely use PostgresSQL
+2. The service must store information in a database. Here at HabariPay we widely use PostgreSQL
 3. The project must contain automated tests satisfying all the requirements.
 4. This repo contains a simple code setup to quickly get you started, but feel free to replace as much as you like.
 
