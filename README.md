@@ -16,7 +16,7 @@ At HabariPay, we have two entities that represent this information:
 * `transactions`: representing purchase information, card details, value, etc.
 * `payouts`: represents the money that we paid out to the customer
 
-> Note: when a customer completes a card transaction, we normally receive the money from the card processor (called a settlement) 
+> Note: When a customer completes a card transaction, we normally receive the money from the card processor (called a settlement) 
 on average 1 day later (what we call T+1), because this is how the financial chain (issuer, acquirers) works. 
 However, it is possible to receive money instantly through "Virtual Accounts". 
 If you are curious, you can look at the product page, but this is not necessary to complete this challenge: https://squadco.com/other-products/#virtualAccounts
@@ -64,19 +64,21 @@ Ex: if the rate is 5% and the merchant received a transaction worth N100.00, he 
      * `available` balance: Total of every settled transaction the merchant has received (minus payouts)
      * `pending_settlement` balance: Total of every pending transaction
 
-> Note: You don't need to worry about authentication, installments or recurring payments and feel free to install any necessary module you wish to use.
-
 ## Restrictions
 
 1. The service must be written in Node.js
 2. The service must store information in a database. Here at HabariPay we widely use PostgreSQL
 3. The project must contain automated tests satisfying all the requirements.
-4. This repo contains a simple code setup to quickly get you started, but feel free to replace as much as you like.
+
+## Notes
+- This repo contains a simple code template to quickly get you started, but feel free to replace as much as you like.
+- You don't need to worry about authentication, installments or recurring payments.
+- You can install any necessary module you wish to use, no side-eyes.
 
 ## How to submit
 
 1. The challenge must be sent to the HR person contacting you, in the form of a link to a public repository
-2. We will evaluate you based on the service architecture, code quality, understanding of business rules, willingness to take on the challenge and how prepared this service would be to be run in production.
+2. We will evaluate you based on the service architecture, code quality, understanding of requirements, and how prepared this service would be to be run in production.
 3. After receiving the submission, we will call you to talk to the team, present the challenge and discuss the decisions you made.
 4. We are also open to talk about how we can improve on this service.
 5. We think that **1 week** is an ok amount of time to do the challenge, but we know that not everyone has the same level of availability. So let us know if you need more time, okay?
