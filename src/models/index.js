@@ -19,13 +19,6 @@ const sequelize = new Sequelize(
 }
 );
 
-// debugging
-console.log('Attempting to connect to database with:');
-console.log('  Host:', config.db.host);
-console.log('  Port:', config.db.port || 5432); // Default PostgreSQL port is 5432
-console.log('  Database:', config.db.database);
-console.log('  Username:', config.db.username);
-
 const db = {
   sequelize,
   Sequelize,
