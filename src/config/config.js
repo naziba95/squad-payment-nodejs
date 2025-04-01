@@ -17,4 +17,11 @@ module.exports = {
     cardFeePercentage: parseFloat(process.env.CARD_FEE_PERCENTAGE || '3'),
     virtualAccountFeePercentage: parseFloat(process.env.VIRTUAL_ACCOUNT_FEE_PERCENTAGE || '5'),
   },
+  credentials: 
+  {
+    appId: process.env.TEST_APP_ID || '',
+    appKey: process.env.TEST_APP_KEY || '',
+    allowedIps:process.env.ALLOWED_IP || '',
+
+  }
 };

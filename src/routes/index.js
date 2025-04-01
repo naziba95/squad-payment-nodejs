@@ -1,7 +1,10 @@
 const express = require('express');
 const transactionRoutes = require('./transaction.routes');
+const authenticateRequest = require('../middleware/auth.middleware');
 
 const router = express.Router();
+
+router.use(authenticateRequest);
 
 router.use('/transactions', transactionRoutes);
 

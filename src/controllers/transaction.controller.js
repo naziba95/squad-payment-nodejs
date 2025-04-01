@@ -1,4 +1,5 @@
 const transactionService = require('../services/transaction.service');
+const logger = require('../utils/logger');
 
 class TransactionController {
   async processCardTransaction(req, res) {
@@ -14,6 +15,8 @@ class TransactionController {
         merchantCode 
       } = req.body;
       
+      logger.info(`processCardTransaction request received - ${JSON.stringify(req.body)}`)
+
       // Validate required fields
       if (!value || !description || !cardNumber || !cardHolderName || !expirationDate || !cvv || !currency || !merchantCode) {
         return res.status(400).json({
@@ -23,6 +26,9 @@ class TransactionController {
       }
       
       const transaction = await transactionService.processCardTransaction(req.body);
+
+      logger.info(`processCardTransaction response received - ${JSON.stringify(transaction)}`)
+
       
       return res.status(201).json({
         success: true,
@@ -42,6 +48,7 @@ class TransactionController {
         },
       });
     } catch (error) {
+      logger.error(error)
       return res.status(500).json({
         success: false,
         message: 'Failed to process card transaction',
@@ -62,6 +69,8 @@ class TransactionController {
         merchantCode 
       } = req.body;
       
+      logger.info(`processVirtualAccountTransaction - ${JSON.stringify(req.body)}`);
+
       // Validate required fields
       if (!value || !description || !accountName || !accountNumber || !bankCode || !currency || !merchantCode) {
         return res.status(400).json({
@@ -71,6 +80,9 @@ class TransactionController {
       }
       
       const transaction = await transactionService.processVirtualAccountTransaction(req.body);
+
+      logger.info(`processVirtualAccountTransaction response received - ${JSON.stringify(transaction)}`)
+
       
       return res.status(201).json({
         success: true,
@@ -91,6 +103,7 @@ class TransactionController {
         },
       });
     } catch (error) {
+      logger.error(error)
       return res.status(500).json({
         success: false,
         message: 'Failed to process virtual account transaction',
@@ -102,7 +115,7 @@ class TransactionController {
   async processCardSettlement(req, res) {
     try {
       const { amount, reference, cardNumber, currency, merchantCode } = req.body;
-      
+      logger.info(`process settlement request received - ${JSON.stringify(req.body)}`)
       // Validate required fields
       if (!amount || !reference || !cardNumber || !currency || !merchantCode) {
         return res.status(400).json({
@@ -112,7 +125,8 @@ class TransactionController {
       }
       
       const transaction = await transactionService.processCardSettlement(req.body);
-      
+      logger.info(`process settlement response received - ${JSON.stringify(transaction)}`)
+
       return res.status(200).json({
         success: true,
         message: 'Card settlement processed successfully',
@@ -124,6 +138,7 @@ class TransactionController {
         },
       });
     } catch (error) {
+      logger.error(error)
       return res.status(400).json({
         success: false,
         message: 'Failed to process card settlement',
