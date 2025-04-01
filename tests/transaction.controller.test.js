@@ -1,11 +1,11 @@
 const request = require('supertest');
-const app = require('../app'); // Your Express app
-const transactionService = require('../services/transaction.service');
+const app = require('../src/app'); // Your Express app
+const transactionService = require('../src/services/transaction.service');
 
-jest.mock('../services/transaction.service'); // Mock the transaction service
+jest.mock('../src/services/transaction.service'); // Mock the transaction service
 
 describe('TransactionController', () => {
-  describe('POST /api/transactions/card', () => {
+  describe('POST /v1/transactions/card', () => {
     it('should return a success response when the transaction is processed successfully', async () => {
       const mockTransaction = {
         reference: 'CARD-12345',
@@ -25,7 +25,7 @@ describe('TransactionController', () => {
       transactionService.processCardTransaction.mockResolvedValue(mockTransaction);
 
       const response = await request(app)
-        .post('/api/transactions/card')
+        .post('/v1/transactions/card')
         .send({
           value: 1000,
           description: 'Test Transaction',
@@ -45,7 +45,7 @@ describe('TransactionController', () => {
 
     it('should return an error response if required fields are missing', async () => {
       const response = await request(app)
-        .post('/api/transactions/card')
+        .post('/v1/transactions/card')
         .send({}); // Sending empty body
 
       expect(response.status).toBe(400);
@@ -58,7 +58,7 @@ describe('TransactionController', () => {
       transactionService.processCardTransaction.mockRejectedValue(new Error(errorMessage));
 
       const response = await request(app)
-        .post('/api/transactions/card')
+        .post('/v1/transactions/card')
         .send({
           value: 1000,
           description: 'Test Transaction',
@@ -77,37 +77,5 @@ describe('TransactionController', () => {
     });
   });
 
-  describe('POST /api/transactions/status', () => {
-    it('should return success when status is updated successfully', async () => {
-      const mockTransaction = {
-        reference: 'CARD-12345',
-        merchantCode: 'M001',
-        value: 1000,
-        description: 'Test Transaction',
-        status: 'completed',
-      };
-
-      transactionService.updateTransactionStatus.mockResolvedValue(mockTransaction);
-
-      const response = await request(app)
-        .post('/api/transactions/status')
-        .send({ reference: 'CARD-12345', status: 'completed' });
-
-      expect(response.status).toBe(200);
-      expect(response.body.success).toBe(true);
-      expect(response.body.message).toBe('Transaction status updated successfully');
-    });
-
-    it('should return an error response if the transaction is not found', async () => {
-      transactionService.updateTransactionStatus.mockResolvedValue(null);
-
-      const response = await request(app)
-        .post('/api/transactions/status')
-        .send({ reference: 'INVALID-123', status: 'completed' });
-
-      expect(response.status).toBe(404);
-      expect(response.body.success).toBe(false);
-      expect(response.body.message).toBe('Transaction not found');
-    });
-  });
+  
 });

@@ -1,13 +1,16 @@
-const transactionService = require('../services/transaction.service');
-const transactionRepository = require('../repositories/transaction.repository');
-const merchantWalletRepository = require('../repositories/merchant-wallet.repository');
-const config = require('../config/config');
+const transactionService = require('../src/services/transaction.service');
+const transactionRepository = require('../src/repositories/transaction.repository');
+const merchantWalletRepository = require('../src/repositories/merchant-wallet.repository');
+const payoutRepository = require('../src/repositories/payout.repository');
+const config = require('../src/config/config');
 
-jest.mock('../repositories/transaction.repository');
-jest.mock('../repositories/merchant-wallet.repository');
-jest.mock('../config/config');
+jest.mock('../src/repositories/transaction.repository');
+jest.mock('../src/repositories/merchant-wallet.repository');
+jest.mock('../src/repositories/payout.repository');
+jest.mock('../src/config/config');
 
 describe('TransactionService', () => {
+
   describe('processCardTransaction', () => {
     it('should create a new card transaction and update merchant wallet', async () => {
       const mockTransactionData = {
@@ -84,28 +87,66 @@ describe('TransactionService', () => {
     });
   });
 
-  describe('updateTransactionStatus', () => {
-    it('should update transaction status successfully', async () => {
-      const mockTransaction = {
-        reference: 'CARD-12345',
-        merchantCode: 'M001',
-        value: 1000,
-        description: 'Test Transaction',
-        status: 'pending',
-      };
 
-      transactionRepository.updateTransactionStatus.mockResolvedValue(mockTransaction);
 
-      const result = await transactionService.updateTransactionStatus('CARD-12345', 'completed');
-
-      expect(transactionRepository.updateTransactionStatus).toHaveBeenCalledWith('CARD-12345', 'completed');
-      expect(result.status).toBe('completed');
+  describe('TransactionService - createPayout', () => {
+    const merchantCode = 'MERCHANT123';
+  
+    beforeEach(() => {
+      jest.clearAllMocks();
+    });
+  
+    it('should create a payout successfully', async () => {
+      // Mock wallet balance (merchant has available funds)
+      merchantWalletRepository.getWalletBalance.mockResolvedValue({
+        available: 1000,
+        currency: 'USD',
+      });
+  
+      // Mock payout repository
+      payoutRepository.createPayout.mockResolvedValue({
+        reference: 'PO-123456',
+        amount: 1000,
+        currency: 'USD',
+        status: 'processed',
+        merchantCode,
+      });
+  
+      // Mock wallet update
+      merchantWalletRepository.updateAvailableBalance.mockResolvedValue(true);
+  
+      // Call the function
+      const result = await transactionService.createPayout(merchantCode);
+  
+      // Assertions
+      expect(result).toHaveProperty('reference');
+      expect(result.amount).toBe(1000);
+      expect(result.currency).toBe('USD');
+      expect(result.status).toBe('processed');
+  
+      // Verify mocks were called correctly
+      expect(merchantWalletRepository.getWalletBalance).toHaveBeenCalledWith(merchantCode);
+      expect(payoutRepository.createPayout).toHaveBeenCalled();
+      expect(merchantWalletRepository.updateAvailableBalance).toHaveBeenCalledWith(merchantCode, 1000, false);
+    });
+  
+    it('should throw an error if merchantCode is missing', async () => {
+      await expect(transactionService.createPayout()).rejects.toThrow('Merchant code is required');
+    });
+  
+    it('should throw an error if no funds are available', async () => {
+      // Mock wallet balance (no funds available)
+      merchantWalletRepository.getWalletBalance.mockResolvedValue({
+        available: 0,
+        currency: 'USD',
+      });
+  
+      await expect(transactionService.createPayout(merchantCode)).rejects.toThrow('No funds available for payout');
+  
+      expect(merchantWalletRepository.getWalletBalance).toHaveBeenCalledWith(merchantCode);
+      expect(payoutRepository.createPayout).not.toHaveBeenCalled();
+      expect(merchantWalletRepository.updateAvailableBalance).not.toHaveBeenCalled();
     });
 
-    it('should throw an error if transaction is not found', async () => {
-      transactionRepository.updateTransactionStatus.mockResolvedValue(null);
-
-      await expect(transactionService.updateTransactionStatus('INVALID-123', 'completed')).rejects.toThrow('Transaction not found');
-    });
-  });
+});
 });
